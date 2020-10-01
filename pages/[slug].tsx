@@ -3,14 +3,33 @@ import React from 'react'
 import Head from 'next/head'
 
 interface Props {
-    query: Record<string, string>
+    params: {
+        slug: string
+    }
 }
 
 const metaKeys = ['title', 'description', 'image']
 const facebookKeys = [...metaKeys, 'url']
 const twitterKeys = [...facebookKeys, 'site']
 
-const Home: React.FC<Props> = ({ query }) => {
+const decode = (str: string) => {
+    let res: Record<string, string> = {}
+    try {
+        if (str) {
+            res = JSON.parse(window.atob(str))
+        }
+    } catch (e) {
+        try {
+            if (str) {
+                res = JSON.parse(Buffer.from(str, 'base64').toString())
+            }
+        } catch (e) {}
+    }
+    return res
+}
+
+const Home: React.FC<Props> = ({ params: { slug } }) => {
+    const query = decode(slug)
     const keys = Object.keys(query)
     return (
         <>
@@ -39,7 +58,6 @@ const Home: React.FC<Props> = ({ query }) => {
         </>
     )
 }
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => ({ props: { query } })
+export const getServerSideProps: GetServerSideProps = async ({ params }) => ({ props: { params } })
 
 export default Home
