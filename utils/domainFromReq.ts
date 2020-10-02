@@ -6,8 +6,11 @@ const domainFromReq = (req: IncomingMessage) => {
     return `https://${parts.join('.')}`
 }
 export const apiDomainFromReq = (req: IncomingMessage) => {
-    const parts = req.headers.host.split('.')
+    let parts = req.headers.host.split('.')
     parts.shift()
+    if (parts.length === 2) {
+        parts = ['', ...parts]
+    }
     parts[0] = `${parts[0]}api`
     return `https://${parts.join('.')}`
 }
