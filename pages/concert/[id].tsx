@@ -1,17 +1,16 @@
 import { GetServerSideProps } from 'next'
 import React from 'react'
 import Head from 'next/head'
-import domainFromReq, { apiDomainFromReq } from '../../utils/domainFromReq'
 import getNewDate from '../../utils/getNewDate'
 
 interface Props {
     concert: any
-    domain: string
 }
 
 const DEVICE = 'web'
 
-const Concert: React.FC<Props> = ({ concert, domain }) => {
+const Concert: React.FC<Props> = ({ concert }) => {
+    const domain = process.env.NEXT_APP_APP_URL
     const title = concert?.name ?? ''
     const description = concert?.description ?? ''
     const image = concert?.cover?.url ?? ''
@@ -53,8 +52,7 @@ const Concert: React.FC<Props> = ({ concert, domain }) => {
     )
 }
 export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
-    const baseApiUrl = apiDomainFromReq(req)
-    const domain = domainFromReq(req)
+    const baseApiUrl = process.env.NEXT_APP_API_URL
     const apiUrl = `${baseApiUrl}/api/v1/concerts/schedule/${params.id}`
     const data = await fetch(apiUrl, {
         headers: {
@@ -71,7 +69,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     return {
         props: {
             concert,
-            domain,
         },
     }
 }
